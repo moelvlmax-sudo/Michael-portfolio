@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Michael Alvarez | Desarrollador Web Full Stack</title>
+    <style>
+        :root {
+            --bg-main: #060911;
+            --bg-header: rgba(6, 9, 17, 0.85);
+            --bg-card: #0d1322;
+            --bg-tag: #131c31;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #1e293b;
+            --border-accent: rgba(0, 240, 255, 0.3);
+            --accent: #00f0ff;
+            --accent-hover: #70f3ff;
+            --accent-bg: rgba(0, 240, 255, 0.08);
+            --glow: 0 0 20px rgba(0, 240, 255, 0.25);
+            --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            --modal-bg: rgba(6, 9, 17, 0.92);
+        }
+
+        [data-theme="light"] {
+            --bg-main: #f8fafc;
+            --bg-header: rgba(248, 250, 252, 0.85);
+            --bg-card: #ffffff;
+            --bg-tag: #f1f5f9;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-color: #e2e8f0;
+            --border-accent: rgba(2, 132, 199, 0.3);
+            --accent: #0284c7;
+            --accent-hover: #0369a1;
+            --accent-bg: rgba(2, 132, 199, 0.08);
+            --glow: 0 0 15px rgba(2, 132, 199, 0.2);
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            --modal-bg: rgba(255, 255, 255, 0.92);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            background-color: var(--bg-main) !important;
+            color: var(--text-main) !important;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; width: 100%; }
+
+        /* Header & Navegación */
+        header {
+            position: fixed; top: 0; left: 0; width: 100%;
+            background-color: var(--bg-header);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        nav { display: flex; justify-content: space-between; align-items: center; height: 70px; }
+
+        .logo {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--text-main);
+            text-decoration: none;
+            cursor: pointer;
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            color: var(--accent);
+            text-shadow: var(--glow);
+        }
+        
+        .nav-right { display: flex; align-items: center; gap: 16px; }
+        .nav-links { display: flex; gap: 8px; list-style: none; }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover { color: var(--accent); background-color: var(--accent-bg); }
+        .nav-btn.active {
+            color: var(--accent);
+            background-color: var(--accent-bg);
+            font-weight: 600;
+            box-shadow: inset 0 -2px 0 var(--accent);
+        }
+
+        .theme-toggle {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent);
+            box-shadow: var(--glow);
+        }
+
+        /* Layout Main */
+        main { margin-top: 70px; flex: 1; display: flex; align-items: center; }
+        
+        .page-section {
+            display: none;
+            width: 100%;
+            padding: 60px 0;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .page-section.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Hero */
+        .hero { display: flex; flex-direction: column; align-items: flex-start; }
+
+        .badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background-color: var(--accent-bg);
+            color: var(--accent);
+            border: 1px solid var(--border-accent);
+            padding: 6px 16px; border-radius: 20px; font-size: 0.875rem; font-weight: 600; margin-bottom: 24px;
+            box-shadow: var(--glow);
+        }
+
+        .badge-dot { width: 8px; height: 8px; background-color: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; }
+        .hero h1 { font-size: 3.2rem; font-weight: 800; line-height: 1.15; margin-bottom: 20px; color: var(--text-main); }
+        .gradient-text { color: var(--accent); text-shadow: var(--glow); }
+        .hero p { font-size: 1.15rem; color: var(--text-muted); max-width: 720px; margin-bottom: 36px; }
+
+        .cta-group { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 60px; }
+
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 28px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 1rem; border: none; cursor: pointer; transition: all 0.2s ease; }
+        .btn-primary { background-color: var(--accent); color: #060911; box-shadow: var(--glow); }
+        .btn-primary:hover { background-color: var(--accent-hover); transform: translateY(-2px); }
+        .btn-secondary { background-color: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); }
+        .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            width: 100%;
+            border-top: 1px solid var(--border-color);
+            padding-top: 40px;
+        }
+
+        .stat-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .stat-card:hover { border-color: var(--border-accent); transform: translateY(-3px); }
+        .stat-number { font-size: 1.8rem; font-weight: 800; color: var(--accent); margin-bottom: 4px; text-shadow: var(--glow); }
+        .stat-label { font-size: 0.9rem; color: var(--text-muted); }
+
+        /* Estilos generales */
+        .section-subtitle { color: var(--accent); text-transform: uppercase; font-size: 0.85rem; font-weight: 700; letter-spacing: 1.5px; margin-bottom: 8px; }
+        .section-title { font-size: 2.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 32px; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+        @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } .hero h1 { font-size: 2.2rem; } }
+
+        .about-text p { color: var(--text-muted); margin-bottom: 18px; font-size: 1.05rem; }
+        .timeline { margin-top: 32px; display: flex; flex-direction: column; gap: 20px; }
+        .timeline-item { border-left: 2px solid var(--accent); padding-left: 16px; }
+        .timeline-title { font-size: 1.1rem; font-weight: 700; color: var(--text-main); }
+        .timeline-desc { font-size: 0.92rem; color: var(--text-muted); }
+
+        .skill-group { margin-bottom: 24px; }
+        .skill-group h4 { color: var(--text-main); margin-bottom: 12px; font-size: 1.05rem; }
+        .skill-tags { display: flex; flex-wrap: wrap; gap: 10px; }
+        .tag { background-color: var(--bg-tag); color: var(--text-main); border: 1px solid var(--border-color); padding: 6px 14px; border-radius: 6px; font-size: 0.875rem; transition: border-color 0.2s; }
+        .tag:hover { border-color: var(--accent); }
+
+        /* Grid de Proyectos y Galería Interna (Hasta 5 Imágenes) */
+        .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+
+        .project-card { 
+            background-color: var(--bg-card); 
+            border: 1px solid var(--border-color); 
+            border-radius: 14px; 
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column;
+            box-shadow: var(--card-shadow);
+            transition: all 0.2s ease;
+        }
+
+        .project-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: var(--glow);
+        }
+
+        .gallery-container {
+            width: 100%;
+            margin-bottom: 16px;
+        }
+
+        .main-thumb {
+            width: 100%;
+            height: 190px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            transition: opacity 0.2s;
+        }
+
+        .main-thumb:hover { opacity: 0.9; }
+
+        .gallery-thumbs {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .gallery-thumb-mini {
+            width: 50px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            opacity: 0.6;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .gallery-thumb-mini:hover,
+        .gallery-thumb-mini.active {
+            opacity: 1;
+            border-color: var(--accent);
+            box-shadow: var(--glow);
+        }
+
+        .project-title { font-size: 1.3rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px; }
+        .project-desc { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 16px; flex-grow: 1; }
+        .project-tech { display: flex; flex-wrap: wrap; gap: 8px; }
+        .project-tech span {
+            font-size: 0.8rem;
+            color: var(--accent);
+            background-color: var(--accent-bg);
+            border: 1px solid var(--border-accent);
+            padding: 4px 10px;
+            border-radius: 4px;
+        }
+
+        .contact-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+        }
+
+        footer {
+            padding: 30px 0;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
+        }
+
+        /* Modal Lightbox Interactivo con Controles */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--modal-bg);
+            backdrop-filter: blur(10px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 2000; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .modal-wrapper {
+            position: relative;
+            max-width: 90%;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .modal-img-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-img {
+            max-width: 100%;
+            max-height: 75vh;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+            object-fit: contain;
+        }
+
+        .modal-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+
+        .modal-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            box-shadow: var(--glow);
+        }
+
+        .modal-prev { left: -60px; }
+        .modal-next { right: -60px; }
+
+        @media (max-width: 768px) {
+            .modal-prev { left: 10px; }
+            .modal-next { right: 10px; }
+        }
+
+        .modal-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-top: 12px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .modal-close {
+            position: absolute; top: -45px; right: 0;
+            background: none; border: none; color: var(--text-main);
+            font-size: 2.2rem; cursor: pointer; line-height: 1; transition: color 0.2s;
+        }
+
+        .modal-close:hover { color: var(--accent); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <nav>
+                <a class="logo tab-trigger" data-target="hero">Michael<span>.dev</span></a>
+                <div class="nav-right">
+                    <ul class="nav-links">
+                        <li><button class="nav-btn tab-trigger active" data-target="hero">Inicio</button></li>
+                        <li><button class="nav-btn tab-trigger" data-target="about">Sobre mí</button></li>
+                        <li><button class="nav-btn tab-trigger" data-target="projects">Proyectos</button></li>
+                        <li><button class="nav-btn tab-trigger" data-target="contact">Contacto</button></li>
+                    </ul>
+                    <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar Tema">🌙</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Inicio -->
+        <section id="hero" class="page-section active">
+            <div class="container">
+                <div class="hero">
+                    <div class="badge"><span class="badge-dot"></span> Disponible para nuevos proyectos</div>
+                    <h1>Desarrollador Web <br><span class="gradient-text">Full Stack</span></h1>
+                    <p>Especializado en construir productos digitales veloces, intuitivos y altamente optimizados. Combino interfaces modernas con arquitecturas sólidas sin frameworks innecesarios.</p>
+                    <div class="cta-group">
+                        <button class="btn btn-primary tab-trigger" data-target="projects">Explorar Proyectos</button>
+                        <button class="btn btn-secondary tab-trigger" data-target="contact">Contactar</button>
+                    </div>
+
+                    <div class="hero-stats">
+                        <div class="stat-card">
+                            <div class="stat-number">100%</div>
+                            <div class="stat-label">Rendimiento Native-First</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">RAG & AI</div>
+                            <div class="stat-label">Integración Backend Inteligente</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">Full Stack</div>
+                            <div class="stat-label">JS / Python / Node / Mongo</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sobre Mí -->
+        <section id="about" class="page-section">
+            <div class="container">
+                <div class="grid-2">
+                    <div>
+                        <p class="section-subtitle">Sobre Mí</p>
+                        <h2 class="section-title">Enfoque y Metodología</h2>
+                        <div class="about-text">
+                            <p>Hola, soy Michael Alvarez. Diseñador y desarrollador web enfocado en la creación de aplicaciones eficientes, rápidas y totalmente adaptadas a las necesidades del cliente.</p>
+                            <p>Mi estándar de trabajo se basa en escribir código limpio y optimizado, dando prioridad al rendimiento client-side, la velocidad de respuesta e interfaces limpias que potencian la experiencia de usuario.</p>
+                        </div>
+
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-title">Arquitectura Eficiente</div>
+                                <div class="timeline-desc">Desarrollo directo sobre estándares web para maximizar tiempos de carga y respuesta de servidores.</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-title">Soluciones Especializadas</div>
+                                <div class="timeline-desc">Implementación de motores RAG, e-commerce livianos, utilidades client-side y conversores de datos.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <p class="section-subtitle">Especialidades</p>
+                        <h2 class="section-title">Stack Tecnológico</h2>
+                        
+                        <div class="skill-group">
+                            <h4>Core Web & Frontend</h4>
+                            <div class="skill-tags">
+                                <span class="tag">HTML5 Semántico</span>
+                                <span class="tag">CSS3 (Grid/Flexbox)</span>
+                                <span class="tag">JavaScript (ES6+)</span>
+                                <span class="tag">Svelte</span>
+                                <span class="tag">Tailwind CSS</span>
+                            </div>
+                        </div>
+
+                        <div class="skill-group">
+                            <h4>Backend & Bases de Datos</h4>
+                            <div class="skill-tags">
+                                <span class="tag">Python</span>
+                                <span class="tag">Node.js</span>
+                                <span class="tag">Express</span>
+                                <span class="tag">MongoDB</span>
+                                <span class="tag">Supabase</span>
+                            </div>
+                        </div>
+
+                        <div class="skill-group">
+                            <h4>Herramientas & Integración</h4>
+                            <div class="skill-tags">
+                                <span class="tag">APIs REST</span>
+                                <span class="tag">Sistemas RAG / LLM</span>
+                                <span class="tag">HTML Canvas API</span>
+                                <span class="tag">Git / GitHub</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Proyectos con soporte de 1 a 5 imágenes dinámicas -->
+        <section id="projects" class="page-section">
+            <div class="container">
+                <p class="section-subtitle">Portafolio</p>
+                <h2 class="section-title">Proyectos Destacados</h2>
+
+                <div class="projects-grid">
+                    
+                    <!-- Proyecto 1 (3 Imágenes) -->
+                    <div class="project-card" data-images='[
+                        {"src": "https://picsum.photos/800/500?random=1", "caption": "sampleshop - Vista principal"},
+                        {"src": "https://picsum.photos/800/500?random=11", "caption": "sampleshop - Catálogo de productos"},
+                        {"src": "https://picsum.photos/800/500?random=12", "caption": "sampleshop - Checkout"}
+                    ]'>
+                        <div class="gallery-container">
+                            <img src="https://picsum.photos/800/500?random=1" alt="sampleshop" class="main-thumb">
+                            <div class="gallery-thumbs"></div>
+                        </div>
+                        <h3 class="project-title">sampleshop</h3>
+                        <p class="project-desc">E-commerce con UI/UX moderna e inspirada en conceptos estéticos estilo IKEA y Milfshakes.</p>
+                        <div class="project-tech"><span>Svelte</span><span>Tailwind CSS</span><span>JavaScript</span></div>
+                    </div>
+
+                    <!-- Proyecto 2 (5 Imágenes - Máximo) -->
+                    <div class="project-card" data-images='[
+                        {"src": "https://picsum.photos/800/500?random=2", "caption": "Lumen Webs - Hero principal"},
+                        {"src": "https://picsum.photos/800/500?random=21", "caption": "Lumen Webs - Sección Servicios"},
+                        {"src": "https://picsum.photos/800/500?random=22", "caption": "Lumen Webs - Planes y precios"},
+                        {"src": "https://picsum.photos/800/500?random=23", "caption": "Lumen Webs - Formulario"},
+                        {"src": "https://picsum.photos/800/500?random=24", "caption": "Lumen Webs - Vista Responsive Mobile"}
+                    ]'>
+                        <div class="gallery-container">
+                            <img src="https://picsum.photos/800/500?random=2" alt="Lumen Webs" class="main-thumb">
+                            <div class="gallery-thumbs"></div>
+                        </div>
+                        <h3 class="project-title">Lumen Webs</h3>
+                        <p class="project-desc">Landing page profesional enfocada en la comercialización y venta de desarrollo web.</p>
+                        <div class="project-tech"><span>HTML5</span><span>CSS3</span><span>JavaScript</span></div>
+                    </div>
+
+                    <!-- Proyecto 3 (2 Imágenes) -->
+                    <div class="project-card" data-images='[
+                        {"src": "https://picsum.photos/800/500?random=3", "caption": "lumen-optimizer - Interfaz principal"},
+                        {"src": "https://picsum.photos/800/500?random=31", "caption": "lumen-optimizer - Resultado de compresión"}
+                    ]'>
+                        <div class="gallery-container">
+                            <img src="https://picsum.photos/800/500?random=3" alt="lumen-optimizer" class="main-thumb">
+                            <div class="gallery-thumbs"></div>
+                        </div>
+                        <h3 class="project-title">lumen-optimizer</h3>
+                        <p class="project-desc">Herramienta web client-side para compresión, optimización y conversión rápida de imágenes.</p>
+                        <div class="project-tech"><span>JavaScript</span><span>HTML Canvas</span></div>
+                    </div>
+
+                    <!-- Proyecto 4 (1 Imagen - Opcional solo 1) -->
+                    <div class="project-card" data-images='[
+                        {"src": "https://picsum.photos/800/500?random=4", "caption": "al-cambio-app - Calculadora"}
+                    ]'>
+                        <div class="gallery-container">
+                            <img src="https://picsum.photos/800/500?random=4" alt="al-cambio-app" class="main-thumb">
+                            <div class="gallery-thumbs"></div>
+                        </div>
+                        <h3 class="project-title">al-cambio-app</h3>
+                        <p class="project-desc">Calculadora y conversor de tasas de cambio en tiempo real (disponible en Web y Android).</p>
+                        <div class="project-tech"><span>JavaScript</span><span>Node.js</span><span>API</span></div>
+                    </div>
+
+                    <!-- Proyecto 5 (4 Imágenes) -->
+                    <div class="project-card" data-images='[
+                        {"src": "https://picsum.photos/800/500?random=5", "caption": "Asistente Legal IA - Chat RAG"},
+                        {"src": "https://picsum.photos/800/500?random=51", "caption": "Asistente Legal IA - Búsqueda en leyes"},
+                        {"src": "https://picsum.photos/800/500?random=52", "caption": "Asistente Legal IA - Fuentes citadas"},
+                        {"src": "https://picsum.photos/800/500?random=53", "caption": "Asistente Legal IA - Panel de control"}
+                    ]'>
+                        <div class="gallery-container">
+                            <img src="https://picsum.photos/800/500?random=5" alt="Asistente Legal IA" class="main-thumb">
+                            <div class="gallery-thumbs"></div>
+                        </div>
+                        <h3 class="project-title">Asistente Legal IA</h3>
+                        <p class="project-desc">Plataforma RAG para consulta interactiva especializada en la legislación de Venezuela.</p>
+                        <div class="project-tech"><span>Python</span><span>RAG / LLM</span><span>MongoDB</span></div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Contacto -->
+        <section id="contact" class="page-section">
+            <div class="container">
+                <div class="contact-card">
+                    <p class="section-subtitle">¿Tienes un proyecto en mente?</p>
+                    <h3 style="margin-bottom: 12px; font-size: 1.8rem; color: var(--text-main);">¡Trabajemos Juntos!</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 24px;">Estoy disponible para colaboraciones y proyectos de desarrollo web a medida.</p>
+                    <a href="mailto:contacto@tu-dominio.com" class="btn btn-primary">Enviar Mensaje</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Michael Alvarez. Diseñado y construido con HTML, CSS y JS.</p>
+        </div>
+    </footer>
+
+    <!-- Modal Lightbox Ampliado con Navegación -->
+    <div id="image-modal" class="modal-overlay" aria-hidden="true" role="dialog">
+        <div class="modal-wrapper">
+            <button class="modal-close" id="modal-close" aria-label="Cerrar modal">&times;</button>
+            <div class="modal-img-container">
+                <button class="modal-btn modal-prev" id="modal-prev" aria-label="Anterior">&10094;</button>
+                <img id="modal-img" class="modal-img" src="" alt="">
+                <button class="modal-btn modal-next" id="modal-next" aria-label="Siguiente">&10095;</button>
+            </div>
+            <div class="modal-info">
+                <span id="modal-caption"></span>
+                <span id="modal-counter"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Alternador de Modo Claro / Oscuro
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+
+        function setTheme(theme) {
+            htmlElement.setAttribute('data-theme', theme);
+            themeToggleBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+            localStorage.setItem('theme', theme);
+        }
+
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        setTheme(savedTheme);
+
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+        });
+
+        // 2. Navegación entre Secciones
+        function switchTab(targetId) {
+            const sections = document.querySelectorAll('.page-section');
+            const navButtons = document.querySelectorAll('.nav-btn');
+
+            sections.forEach(section => section.classList.remove('active'));
+
+            navButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-target') === targetId);
+            });
+
+            const activeSection = document.getElementById(targetId);
+            if (activeSection) {
+                activeSection.classList.add('active');
+            }
+            window.scrollTo(0, 0);
+        }
+
+        document.addEventListener('click', (e) => {
+            const trigger = e.target.closest('.tab-trigger');
+            if (trigger) {
+                const targetId = trigger.getAttribute('data-target');
+                if (targetId) switchTab(targetId);
+            }
+        });
+
+        // 3. Renderizado Dinámico de Galerías (Hasta 5 imágenes por proyecto)
+        const projectCards = document.querySelectorAll('.project-card');
+
+        projectCards.forEach((card, cardIndex) => {
+            const imagesData = JSON.parse(card.getAttribute('data-images') || '[]');
+            const mainImg = card.querySelector('.main-thumb');
+            const thumbsContainer = card.querySelector('.gallery-thumbs');
+
+            if (imagesData.length > 0) {
+                mainImg.src = imagesData[0].src;
+                mainImg.alt = imagesData[0].caption || 'Vista de proyecto';
+            }
+
+            // Si hay más de 1 imagen (y hasta 5), creamos las miniaturas
+            if (imagesData.length > 1) {
+                imagesData.forEach((imgObj, imgIndex) => {
+                    const miniThumb = document.createElement('img');
+                    miniThumb.src = imgObj.src;
+                    miniThumb.alt = imgObj.caption || '';
+                    miniThumb.className = `gallery-thumb-mini ${imgIndex === 0 ? 'active' : ''}`;
+
+                    miniThumb.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        mainImg.src = imgObj.src;
+                        mainImg.alt = imgObj.caption || '';
+                        
+                        card.querySelectorAll('.gallery-thumb-mini').forEach(t => t.classList.remove('active'));
+                        miniThumb.classList.add('active');
+                    });
+
+                    thumbsContainer.appendChild(miniThumb);
+                });
+            } else {
+                thumbsContainer.style.display = 'none';
+            }
+        });
+
+        // 4. Lightbox Modal con Galería Interactiva
+        const modal = document.getElementById('image-modal');
+        const modalImg = document.getElementById('modal-img');
+        const modalCaption = document.getElementById('modal-caption');
+        const modalCounter = document.getElementById('modal-counter');
+        const modalClose = document.getElementById('modal-close');
+        const modalPrev = document.getElementById('modal-prev');
+        const modalNext = document.getElementById('modal-next');
+
+        let currentGallery = [];
+        let currentImageIndex = 0;
+
+        function updateModalImage() {
+            if (currentGallery.length === 0) return;
+            const currentObj = currentGallery[currentImageIndex];
+            modalImg.src = currentObj.src;
+            modalImg.alt = currentObj.caption || '';
+            modalCaption.textContent = currentObj.caption || '';
+            
+            if (currentGallery.length > 1) {
+                modalCounter.textContent = `${currentImageIndex + 1} / ${currentGallery.length}`;
+                modalPrev.style.display = 'flex';
+                modalNext.style.display = 'flex';
+            } else {
+                modalCounter.textContent = '';
+                modalPrev.style.display = 'none';
+                modalNext.style.display = 'none';
+            }
+        }
+
+        function openModal(gallery, startIndex = 0) {
+            currentGallery = gallery;
+            currentImageIndex = startIndex;
+            updateModalImage();
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        // Abrir Modal al hacer clic en la imagen principal
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('main-thumb')) {
+                const card = e.target.closest('.project-card');
+                const imagesData = JSON.parse(card.getAttribute('data-images') || '[]');
+                
+                // Encontrar qué índice tiene la imagen actual mostrada
+                const currentSrc = e.target.src;
+                let foundIdx = imagesData.findIndex(item => item.src === currentSrc);
+                if (foundIdx === -1) foundIdx = 0;
+
+                openModal(imagesData, foundIdx);
+            }
+        });
+
+        modalPrev.addEventListener('click', () => {
+            currentImageIndex = (currentImageIndex - 1 + currentGallery.length) % currentGallery.length;
+            updateModalImage();
+        });
+
+        modalNext.addEventListener('click', () => {
+            currentImageIndex = (currentImageIndex + 1) % currentGallery.length;
+            updateModalImage();
+        });
+
+        modalClose.addEventListener('click', closeModal);
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (!modal.classList.contains('active')) return;
+            if (e.key === 'Escape') closeModal();
+            if (e.key === 'ArrowLeft' && currentGallery.length > 1) modalPrev.click();
+            if (e.key === 'ArrowRight' && currentGallery.length > 1) modalNext.click();
+        });
+    </script>
+</body>
+</html>
